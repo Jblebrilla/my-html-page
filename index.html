@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HR Visit Form - Tabbed View</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 40px;
+    }
+    .tab-container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 400px;
+    }
+    .tabs {
+      display: flex;
+      cursor: pointer;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px 20px;
+      background: #eee;
+      font-weight: bold;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+    .tab.active {
+      background: #fff;
+      border-bottom: 2px solid white;
+    }
+    .tab-content {
+      padding: 20px;
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    select, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="tab-container">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('allaboutpeople')">All About People</div>
+      <div class="tab" onclick="switchTab('cleanpac')">Clean Pac</div>
+    </div>
+
+    <!-- All About People Form -->
+    <div id="allaboutpeople" class="tab-content active">
+      <label for="poc1">POC:</label>
+      <select id="poc1"></select>
+
+      <label for="site1">City:</label>
+      <select id="site1"></select>
+
+      <label for="subsite1" id="subsiteLabel1" class="hidden">Site:</label>
+      <select id="subsite1" class="hidden"></select>
+
+      <label for="batch1">Batch:</label>
+      <select id="batch1">
+        <option value="">-- Select Batch --</option>
+        <option value="Batch 1">Batch 1</option>
+        <option value="Batch 2">Batch 2</option>
+      </select>
+
+      <label for="name1">Name:</label>
+      <select id="name1"></select>
+
+      <label for="status1">Status:</label>
+      <select id="status1" onchange="updateConfirmation(1)">
+        <option value="">-- Select Status --</option>
+        <option value="Visited">Visited</option>
+        <option value="Not Visited">Not Visited</option>
+      </select>
+
+      <label for="confirmation1" id="confirmationLabel1" class="hidden">Confirmation:</label>
+      <select id="confirmation1" class="hidden">
+        <option value="">-- Select Confirmation --</option>
+        <option value="Accepted">Accepted</option>
+        <option value="Declined">Declined</option>
+      </select>
+
+      <button onclick="submitForm('allaboutpeople')">Submit</button>
+    </div>
+
+    <!-- Clean Pac Form -->
+    <div id="cleanpac" class="tab-content">
+      <label for="poc2">POC:</label>
+      <select id="poc2"></select>
+
+      <label for="site2">City:</label>
+      <select id="site2"></select>
+
+      <label for="subsite2" id="subsiteLabel2" class="hidden">Site:</label>
+      <select id="subsite2" class="hidden"></select>
+
+      <label for="batch2">Batch:</label>
+      <select id="batch2">
+        <option value="">-- Select Batch --</option>
+        <option value="Batch 1">Batch 1</option>
+        <option value="Batch 2">Batch 2</option>
+      </select>
+
+      <label for="name2">Name:</label>
+      <select id="name2"></select>
+
+      <label for="status2">Status:</label>
+      <select id="status2" onchange="updateConfirmation(2)">
+        <option value="">-- Select Status --</option>
+        <option value="Visited">Visited</option>
+        <option value="Not Visited">Not Visited</option>
+      </select>
+
+      <label for="confirmation2" id="confirmationLabel2" class="hidden">Confirmation:</label>
+      <select id="confirmation2" class="hidden">
+        <option value="">-- Select Confirmation --</option>
+        <option value="Accepted">Accepted</option>
+        <option value="Declined">Declined</option>
+      </select>
+
+      <button onclick="submitForm('cleanpac')">Submit</button>
+    </div>
+  </div>
+
+  <script>
+    const data = {
+      allaboutpeople: {
+        sites: ["Las Pinas", "Paranaque", "Pasay", "Mandaluyong", "San Juan", "Quezon City", "Malabon", "Valenzuela", "Manila", "Makati","Cagayan De Oro City",
+  "Olongapo City",
+  "SM Taytay",
+  "Mabalacat City",
+  "Tarlac City",
+  "Antipolo City",
+  "Lucena City",
+  "Calamba City",
+  "Davao City",
+  "Aklan City",
+  "Batangas",
+  "Pampanga",
+  "Cebu City",
+  "Quezon Province",
+  "Iloilo City",
+  "Taytay"],
+        pocs: ["Rachele Asuncion", "Mary Ann Pineda", "Antoinette Yu", "Maria Carmen Nuguid", "Grace V. Miraflores", "Larry Vence Millet","Leila Rebecca Arceo",],
+      },
+      cleanpac: {
+        sites: ["Makati City", "Taguig City", "Pasig City", "Muntinlupa City", "Pasay City", "Paranaque", "Caloocan City", "Quezon City", "San Jose Del Monte  City",
+  "General Santos",
+  "Camarines Sur",
+  "San Fernando City",
+  "Angono, Rizal",
+  "Baliuag",
+  "Santa Rosa, Laguna",
+  "Bacoor City",
+  "Marilao Bulacan",
+  "Bulacan",
+  "Dagupan City",
+  "Bacolod City",
+  "Puerto Prinsesa City",
+  "Zamboanga City",
+  "Butuan City",
+  "Tagaytay City",
+  "Cainta",
+  "Legaspi City",
+  "Cabanatuan City",
+  "La Union",
+  "Laoag City",
+  "Malolos, Bulakan",
+  "General Trias",
+  "Cavite City",
+  "Daet",
+  "Tuguegarao City",
+  "Balanga City, Bataan",
+  "Laguna"],
+        pocs: ["Ronaldo De Dios", "Grace V. Miraflores", "Larry Vence Millet","Antoinette Yu", "Mary Ann Pineda","Maria Carmen Nuguid","Gena C. Empleo"],
+      }
+    };
+
+    const batchesAllAboutPeople = {
+      "Batch 1": ["NORIGA, DEXTER SALISE",
+  "NITOLLAMA, ROLDAN 0",
+  "JABOL, JOBERT DANDOY",
+  "TALAMISAN, JORAN GUTAN",
+  "DELA CRUZ, RYAN PAREÑA",
+  "LLAGAS JR., NARCISO FERRER",
+  "CABRIGAS, ALBERT LAGGUI",
+  "MARIVELES, JUDY LAURILLA",
+  "ACLAO, JOVITO SILLA",
+  "LAGSUB, EDGAR ALBUNA",
+  "BAES, GRENDEL SANTOS",
+  "RESURRECCION, JAY SANTOS",
+  "JARANILLA JR., JERRY DUGUILES",
+  "SABILE, JERICO YASAY",
+  "SIGNO, EDUARDO OCAMPO",
+  "CAYABYAB JR., SALVADOR MUNDO",
+  "MAGNO, DENNIS MADRIAGA",
+  "YAPIZ ,JR FELIPE SETIENTA",
+  "BARNUEVO, HAROLD PAUL CALINAO",
+  "ASUNCION, MARK JOSEPH TIBURCIO",
+  "CABOTAJE, JOSEPH SALES",
+  "MATA, ROWELL TAYCO",
+  "LAQUE, LARSBILL CRISTOBAL",
+  "CASTILLO, NINO JOSE MINGLANA",
+  "DELA CRUZ, RYAN SABUERO",
+  "DELIMA, RICHARD PANGANIBAN",
+  "ROSAROSO, JOEL CAJIPE",
+  "LANDINGIN, LODITO CANTAL",
+  "ORBISO, GILBERT DELA CRUZ",
+  "ARABIA, RODERICK MERCADO",
+  "VERAQUE, JOHN PAULO LEABRES",
+  "VEGA, BIENVENIDO FRANCISCO",
+  "RANARIO, GERSON SABANAL",
+  "BONITO, RONALDO ESPIRITU",
+  "GANITNIT, CHRIZON 0",
+  "NADUA, RENCH EDRYCK TURNO",
+  "APUYA, RENNE ANCERO",
+  "SERRANO, ROGELIO HERMO",
+  "SALUGAO, ED CHRISTIAN AMARILLO",
+  "MALABANAN, TEE JEY FIEDACAN",
+  "AUXILIO, MARK ANTHONY ARCUENO",
+  "ANURAN, JAY-R SALAZAR",
+  "VALLESTEROS, BOBBY FABITO",
+  "FONOLLERA, ARIEL SADIAL",
+  "PINOTE, PATRICK JOHN  DE GRACIA",
+  "BALIN, ADRIAN CLEOFE",
+  "VILLA, ARCHIE SANCHEZ",
+  "CABUNYAG, ARIES AGUDO",
+  "DE JESUS, GABRIEL ARELLANO",
+  "JADOC, ARVIN ABIERTAS",
+  "PEÑAFLOR, JERMEL JUDAR",
+  "DELOS SANTOS, NICK BUENAFLOR",
+  "ORBIGOSO, KENNETTE ORLANES",
+  "PACAANAS, RUEL ABRILLO",
+  "TALUNAY, HEIDEN SARSAGAT",
+  "GALACE, RUSTY JOHN MANANGAN",
+  "ORDINAL,JR. CESAR SUAN",
+  "GEPUIT, MARK VIRGIL ESGUERRA",
+  "MELGAR, REYMOND GOPIO",
+  "PARRENO, ROBERTO ESTIL",
+  "RANARA, RAYMOND ENRIQUE SOLIS",
+  "BATALLER,JR. ARIEL RANTE",
+  "CO , MICHAEL IRORIA",
+  "ZAMORA, ROMARK SALDERO",
+  "MERCADO, MICHAEL TIANZON",
+  "CONCEL , ELMER SANTOS",
+  "BEQUISO, GENESIS ATILANO",
+  "LANDUSAN, GREGORIO GASONG",
+  "MATUCAD, NIEL DELA VEGA",
+  "BALDO, VINCE ALLEN QUIANA",
+  "MONTALES, DULCISIMO CONDEZ",
+  "PRADO, RAYMARK MALGAPO",
+  "ZAMORA, JOEY ORIOLA",
+  "CABRERA, REY CHRISTIAN CABUANG",
+  "BILBAO, JOEY TOLEDO",
+  "CONDES, LIBERVES RODRIGO",
+  "MONTO, RONALD FERRER",
+  "CADIZ, YAXEL IBANEZ"],
+      "Batch 2": [ "YAÑEZ, JHORELL EDROLIN",
+  "BAYHON, ROLITO BALLESTEROS",
+  "PEÑAFLORIDA, DENNIS GRAVADOR",
+  "CABALLERO, DANTE AMORA",
+  "CAYABYAB, LEMUEL PONCE",
+  "BUENAVIDEZ JR., EDUARDO BOTANTE",
+  "GELOGO, JOCEL GARCES",
+  "SANTOS, GILBERT BARROS",
+  "DATU, RENELL LIGSAY",
+  "ALORRO, JEZON FAJARDO",
+  "ESLAO, JONATHAN ESCOBEDO",
+  "LEGASPI, JOSEPH MANIKAD",
+  "SINGGA JR., BENJAMIN GATO",
+  "DIZON, LEOPOLDO DE GRACIA",
+  "MANGCOLENTAS, RICHI YAÑEZ",
+  "LABADOR, ROGEL MACABODBOD",
+  "OBIENA, ARREN PASCUA",
+  "MORAN, ROBERTO VARGAS",
+  "MALIDAS, ALMORES MACAALAY",
+  "JOLONGBAYAN, MARK ANTHONY MAALA",
+  "MONTES, PRINCESS CAPAGALAN",
+  "MAGO,JR BENJAMIN BABAO",
+  "SINADJAN, CRESTIAN TABADA",
+  "CASTILLO, STEPHEN SALABSAB",
+  "AVELINO, JERICO TANAID",
+  "PARAS, ALVIN MORALES",
+  "BIDING, LEOPOLDO FAJARDO",
+  "ABELLA, JED CUTIMAR",
+  "MOJAL, MELCHOR TAYAM",
+  "ATACADOR, EDGAR TALA",
+  "BONGALON, ROSS MAXIMO",
+  "ANONUEVO,JR NAPOLEON HERMO",
+  "AMIHAN, CYRAX MALACOS",
+  "DE GUZMAN, MARK ARZEN DIZON",
+  "LOBERIZA, JOHN LUIS SEGADOR",
+  "ULGASAN, ANGELITO SAJONA",
+  "MANIGOS, WINCHAN DULLA",
+  "LLANES, ALEXANDER QUIRIT",
+  "VELEZ, JOSEPH ALFARO",
+  "GUNIO, MARLON ARTUS",
+  "BOLANIO, EDWIN CAGNAAN",
+  "FUENTES, JOHN RIC CASONA",
+  "BACALLA, CHARLES JOEM SALAZAR",
+  "DIALOGO, JHON CRIS BAJO",
+  "VILLANUEVA, MARVIN OLORVIDA",
+  "ABELLA, WALTER ZAMORA",
+  "IBUNDAS, CARLO CARREDO",
+  "MHEK, MARVIEN FADAL",
+  "ANCOG, JO-AR SUICO",
+  "GERONAGA, ELJEN GELOGO",
+  "FALCONITE, KIM KENNETH SORIANO",
+  "SALAMODING, NECASIO PUBADORA",
+  "DELENA, MEDEL GEPANAGA",
+  "LACIFICAR, KIM FAJARDO",
+  "GILERA, AJ DAVE GEROMO",
+  "SERAPION, DIOLITO PARIS",
+  "BUASAN, JAYMER AGUILLON",
+  "DE CASTRO, ALBERTO REPLAN",
+  "CARIMAN, MARLON ROSALINA",
+  "GOMA, CHARLIE FRESADO"]
+    };
+
+    const batchesCleanPac = {
+      "Batch 1": [ "GERONIMO, MARK PEREZ",
+  "GALICIA, JHOMAR CAMACHO",
+  "LINEZO, RENZ ALBERT TUANO",
+  "SUMIWAN, JAY-AR  SALDERO",
+  "VASQUEZ, ARIES GARCIA",
+  "ODULIO, ROBIN CRUZ",
+  "RALLA ,JR VICENTE LOPEZ",
+  "GUIRIBA, CHALMER OBSTAKOLO",
+  "MANALO, RIZALDY PILLOS",
+  "CRUZ, JOSE JAVINES",
+  "CALONIA, JOEMARIE CHARITA",
+  "GALLOS, JOSE DIOSO",
+  "CERVANTES, PEDRO CHUA",
+  "ABUCEJO, LEO PAJE",
+  "AGRAVANTE, JOEL BENICO",
+  "ALVAREZ, JEROME PARALEJAS",
+  "DIZON, JONATHAN PADULLO",
+  "AVILA, VIGOR MEDRANO",
+  "LAURENTE, LAURENTT  BAMS JIMENEZ",
+  "ATAY, MICHO MICHO",
+  "CALIBOD, RICHIE HOMIS",
+  "SADULLO, JONATHAN REBATO",
+  "SALVO, GLENN PALACA",
+  "BARCELONA, ROMMEL VILLAREAL",
+  "GREGORIO, ALVIN BAAL",
+  "SAN ANDRES JR., RUSSEL MAQUINANA",
+  "LARANJO, ALDEN GAPUL",
+  "SERRA, JOMEL DIA",
+  "DELOS SANTOS, JAYVEE DIEGA",
+  "LINGON, MARK GIL BASCO",
+  "SARABIA,JR. JUANITO BADIDLES",
+  "CHAVEZ, ALFRED MAGBANUA",
+  "POBLETE, RYAN SAMIANO",
+  "GOZON,JR LUCRECIO SALAZAR",
+  "AUSTRIA, BENJAMIN CANALES",
+  "ESTRERA, KARLO LABIAN",
+  "FERRER, LIMAR HOLLERO",
+  "DEMAFELIS, CHAM HIPONA",
+  "MOLON, PATRICK JOSEPH  GAVIOLA",
+  "COLADA, MARTHY  AGUILAR",
+  "SALORIA, MICHAEL ANGELO ANGELO",
+  "DAJOTOY, PETE FRANCIS JABOL",
+  "BALUYOT, MICHAEL PONCE",
+  "BALDOZA, KELVIN BEBANCO",
+  "FLORES,JR NARCISO GUTIERREZ",
+  "CLAVERO, EDWARD FRANCO",
+  "DIAZ, JOHN LOUIS  DAVID",
+  "VERUEN, JIMBOY MAPALINTA",
+  "NIERVA, JORAM DONAS",
+  "PADILLA,JR NILO VIBAS",
+  "SEDANTO,II ARCHIE PASANO",
+  "SALGADO,JR CARLOS  BERTOLANO",
+  "PERILE, JOERI LUGAS",
+  "RENIGEN, ARNEL REQUILLAS",
+  "CADAPAN,JR. BENJAMIN MANABAT",
+  "MAGRAMO, DENVER CLARK MERDEGIA",
+  "OPERARIO, JEROME BALDAGO",
+  "DONCILLO,JR MARCELINO REGACHO",
+  "MALLORCA, BOY MERAN",
+  "PANTI,R. JORGE XYDER",
+  "DARANG, ROLAND GONZALES",
+  "YHAN, CHRISTIAN AGUILA",
+  "SAROL, RONNIE DALENA",
+  "DADO, ALVIN JAYSON",
+  "DONATO, RONALDO CATOLOS",
+  "SAN JOSE, RODOLFO JR. SEGUISA",
+  "ESTROSAS, JULLIUS GONZAGA",
+  "DELEQUIÑA, REGGIE PULGA",
+  "LOGONG, CHRISTOPHER LUGAN",
+  "MANANITA, ALGEN DEVOROSA",
+  "ESBER, MARC CHESTER FARINAS",
+  "JADIA, RONALD RIVERA",
+  "CASIR, BENZAR BARONA",
+  "SEVA, ROMEL FLOROGO",
+  "DASICO, VICTOR CABANTUG"],
+      "Batch 2": ["FLORES, FRANCO GIL JAVIER",
+  "BARRETO, JOEM RAMOS",
+  "CUADRA, ZARIEL ONDIVILLA",
+  "MARCOS, ANTHONY LAMB",
+  "PATRON,III JAIME PELEYAS",
+  "BUENAVIDEZ, ELMER BOTANTE",
+  "PAVIA, ALMER AREVALO",
+  "VICENCIO, JORGE BRIGIDO",
+  "MAPARE, JOEMEDES RELATOR",
+  "DIALOGO JR., ROBERTO BAJO",
+  "ACOSTA, RONNIE VILLAMOR",
+  "SANTILLAN, JEFFERRY BAGAIPO",
+  "BATATA, GLENN VILLARBA",
+  "OLA, MARK JOHN PEÑAFIEL",
+  "MARTINEZ, ALVIN CLAVILLAS",
+  "BONIOL, CONDEL NIÑO CALIWAN",
+  "COLIS, RONNIE COZ",
+  "CURITANA, EDGARDO BARRAMEDA",
+  "FERNANDEZ, ANTHONY ARENAS",
+  "MUSTERA, REYNARDS OLAVARIO",
+  "PACIFICAR, JOAQUIN TONGGOY",
+  "DAMAYAN, EDWARD ESCAMILLAS",
+  "LIBRATAR, ERGIE GRANT PAHAYAHAY",
+  "MERCADO,JR DOMINGO SULAYAO",
+  "PANTOJA, HILARIO SALEGUMBA",
+  "GIVERO, RINO CATUDAY",
+  "DAGOHOY, MARC CYRILL FULGO",
+  "REUYAN,JR CELSO DUPIO",
+  "QUIÑONES,JR SAMUEL  SUGABO",
+  "ORPRECIO, JOHN PHILIP NATNAT",
+  "AMOC, RODELIO PAGHUNASAN",
+  "RABASTO, JESSREY APLETA",
+  "MARZONIA, ARDY CAABAY",
+  "IGOT , REY ALMONTE",
+  "MALLETE ,JR CONRADO MONREAL",
+  "SANIO, VAL GABRIEL",
+  "DEYPALUBOS, ROLAN TALAHURON",
+  "RUBIA, ANTHONY CHUA",
+  "CAMATA, JOSEPH REY ESCOTA",
+  "COQUIA, ARNEL PERRERAS",
+  "CRUZ, HILARIO ESLAYA",
+  "DETUYA, ALEXIS CASANO",
+  "FERNANDEZ, CHARLES TAYAG",
+  "BANIAGA, BENZ MARION ALVARADO",
+  "PULIDO, KAZU  DUQUE",
+  "ESTROPE, RANDY  TIOSAN",
+  "GERONIMO, NORBERTO MARCELO",
+  "FABRIQUEL, ARIEL MAHUSAY",
+  "JALIMAO, LEONARDO MONTUYA Jr.",
+  "NARAG, MICHAEL",
+  "MATITO, JERIC DIONISIO",
+  "BACORNAY, CECELIO JR. GAY",
+  "PACUNAYEN, JOSEPH PASCUA",
+  "SILVERIO, MARK JUNE REYES",
+  "BANARES, MELBERT JR. MANALO PILAR",
+  "TIGBAWAN, BRENT JOSHUA GAJUTOS",
+  "CABALHIN, ANTHONY LABOR",
+  "SABIJON, JESTONI  CODILLA",
+  "PONTERAS, RENO LIZARAN",
+  "RAMOS JR., CARLITO GALAMGAM",
+  "LABADIA, DAVID PACIENCIA",
+  "FLORES, JERRYME ALIBANGBANG",
+  "DELA CRUZ, JEFFREY CALIMAG",
+  "NUEZ, MICHAEL DUADICOS",
+  "LANDICHO, BERLAN SAEZ",
+  "REYES, REYMART MARQUEZ",
+  "MAARAT, WILSON OTIDA"]
+    };
+
+    const subsitesAllAbout = {
+      "Las Pinas": ["PLDT Las Pinas", "PLDT"],
+      "Paranaque": ["PITX", "SM Sucat", "PLDT North Paranaque", "PLDT Smart LEC/PLDT Tambo Exchange", "Bayshore 2", "Sapphire Seaview Park"],
+      "Pasay": ["Shell Residences", "S Residences/Jackman Plaza", "CCP", "SM 1ECOM", "Met Petron", "Shore 2 Residences", "Coast Residences", "SM Retail", "168 Mall/SM Retail/SM 5ECOM/CCP/SM 4ECOM", "PLDT Pasay"],
+      "Mandaluyong": ["FLI Signet", "Sm Cherry Shaw", "Avida Tower Verge", "Pldt Dansalan", "St. Francis Towers", "Shang Wack Wack"],
+      "San Juan": ["Viridian", "PLDT Greenhills"],
+      "Quezon City": ["LDS", "Capital Towers/Fishermall QC/Eastwood Global Plaza/The Arete", "Avida Sola"],
+      "Malabon": ["Fishermall Malabon", "PLDT Valenzuela/PLDT Malabon"],
+      "Valenzuela": ["SM MARILAO", "SM Valenzuela"],
+      "Manila": ["Marlow Navigation", "168 Mall", "BSM Oceanstar", "PLDT MITC", "168 Residences", "PSA", "ITower3", "PLDT MITC/PLDT Tondo"],
+      "Makati": ["The Rise", "Air Residences", "Avida Makati South Point"],
+	"Cagayan De Oro City": ["SM Cagayan"],
+ 	 "Olongapo City": ["SM Olongapo"],
+ 	 "SM Taytay": ["SM Taytay"],
+	  "Mabalacat City": ["SM Clark"],
+ 	 "Tarlac City": ["SM Tarlac", "PLDT Tarlac"],
+  	"Antipolo City": ["SM Cherry Antipolo", "PLDT Antipolo/PLDT Taytay"],
+  	"Lucena City": ["SM City Lucena", "PLDT Lucena Exchange", "SM LUCENA"],
+ 	 "Calamba City": ["SM Calamba", "Yazaki-Torres"],
+ 	 "Davao City": ["SM Lanang", "SM Davao City"],
+ 	 "Aklan City": ["Mandarin Bay", "Shangrila Boracay"],
+ 	 "Batangas": ["SM Lemery", "PLDT BCLS"],
+	  "Pampanga": ["Abenson Mexico", "PLDT SFP Exchange"],
+ 	 "Cebu City": [
+  	  "Shangrila Mactan",
+    	"Mandani Bay",
+   	 "32 Sanson",
+   	 "PLDT Jones",
+   	 "Taft East Gate",
+  	 	 "Symfoni Bossa",
+    "Symfoni Alto",
+  	  "Shangrila Mactan/32 Sanson/The Median"
+  ],
+  "Quezon Province": ["Waltermart Candelaria"],
+  "Iloilo City": ["PLDT Iloilo", "SM Iloilo"],
+  "Taytay": ["SM Taytay"]
+    };
+
+    const subsitesCleanPac = {
+      "Caloocan City": ["PLDT Gracepark"],
+  "Makati City": [
+    "ATG",
+    "The Rise",
+    "Avida One Antonio",
+    "Avida Towers Makati South Point Tower1",
+    "Citygate"
+  ],
+  "Muntinlupa City": ["PLDT Muntinlupa"],
+  "Paranaque City": [
+    "City of Dreams",
+    "Okada Manila"
+  ],
+  "Pasay City": [
+    "SM MAAX",
+    "SM MOA",
+    "SMX"
+  ],
+  "Pasig City": [
+    "Shine Residences",
+    "SM Pasig",
+    "Glas Tower",
+    "CCF",
+    "PLDT Garnet",
+    "Pasig Hope Medical Center"
+  ],
+  "Quezon City": [
+    "SM Cherry Congressional",
+    "Jackman Plaza",
+    "SM Cherry Congressional / SM Fairview",
+    "Capital Towers",
+    "Abenson Dangay",
+    "Golf Hills Residences",
+    "Eastwood",
+    "M Place",
+    "Avida Sola",
+    "PLDT Balara/PLDT Diliman",
+    "PLDT Novaliches",
+    "PLDT South Triangle/PLDT Cubao Mirasol"
+  ],
+  "Taguig City": [
+    "Uptown Eastgate",
+    "Shangrila The Fort",
+    "Avida Vireo"  
+], "San Jose Del Monte City": ["SM San Jose Del Monte"],
+  "General Santos": ["SM Gensan"],
+  "Camarines Sur": ["SM City Naga"],
+  "San Fernando City": ["SM Pampanga", "SM Telabastagan"],
+  "Angono, Rizal": ["SM Angono"],
+  "Baliuag": ["Waltermart Baliwag"],
+  "Santa Rosa, Laguna": ["SM Sta. Rosa"],
+  "Bacoor City": ["SM Molino"],
+  "Marilao Bulacan": ["SM Marilao"],
+  "Bulacan": ["SM Pulilan"],
+  "Dagupan City": ["SM Dagupan", "PLDT Dagupan"],
+  "Bacolod City": ["Reliver (Bacolod)", "PLDT Bacolod", "Seda"],
+  "Puerto Prinsesa City": ["SM Puerto Princesa"],
+  "Zamboanga City": ["SM Mindpro"],
+  "Butuan City": ["SM Butuan"],
+  "Tagaytay City": ["Skyranch"],
+  "Cainta": ["PLDT Cainta/PLDT South Marikina"],
+  "Legaspi City": ["PLDT Legazpi"],
+  "Cabanatuan City": ["PLDT Cabanatuan"],
+  "La Union": ["PLDT SFU Exchange/PLDT ICLS", "Epic Mall Naguilian"],
+  "Laoag City": ["PLDT Laoag SE"],
+  "Malolos, Bulakan": ["PLDT Malolos"],
+  "General Trias": ["Shang Residences/ Abenson Madison/  Abenson Dangay/ Royal View/ Avida South Point"],
+  "Cavite City": [
+    "PLDT Kawit Exchange/PLDT Trece Martires",
+    "PLDT Imus and Bacoor",
+    "SM Rosario",
+    "WM GenTri"
+  ],
+  "Daet": ["PLDT Daet CLS"],
+  "Tuguegarao City": ["PLDT Tuguegarao"],
+  "Balanga City, Bataan": ["PLDT Balanga"],
+  "Laguna": ["SM Sta. Rosa", "SM Calamba"]
+    };
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+      document.querySelector(`.tab[onclick*="${tabId}"]`).classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    function populateSelect(id, options) {
+      const select = document.getElementById(id);
+      select.innerHTML = '<option value="">-- Select --</option>';
+      options.forEach(val => {
+        const option = document.createElement('option');
+        option.value = val;
+        option.textContent = val;
+        select.appendChild(option);
+      });
+    }
+
+    function updateConfirmation(formNumber) {
+      const status = document.getElementById(`status${formNumber}`).value;
+      const confirmation = document.getElementById(`confirmation${formNumber}`);
+      const label = document.getElementById(`confirmationLabel${formNumber}`);
+      if (status === "Visited") {
+        confirmation.classList.remove("hidden");
+        label.classList.remove("hidden");
+      } else {
+        confirmation.classList.add("hidden");
+        label.classList.add("hidden");
+        confirmation.value = "";
+      }
+    }
+
+    function updateSubsiteOptions(city, formNumber) {
+      const subsite = document.getElementById(`subsite${formNumber}`);
+      const label = document.getElementById(`subsiteLabel${formNumber}`);
+      const source = formNumber === 1 ? subsitesAllAbout : subsitesCleanPac;
+
+      if (source[city]) {
+        subsite.innerHTML = '<option value="">-- Select Site --</option>';
+        source[city].forEach(site => {
+          const option = document.createElement('option');
+          option.value = site;
+          option.textContent = site;
+          subsite.appendChild(option);
+        });
+        label.classList.remove("hidden");
+        subsite.classList.remove("hidden");
+      } else {
+        label.classList.add("hidden");
+        subsite.classList.add("hidden");
+        subsite.innerHTML = '';
+      }
+    }
+
+    function updateNamesByBatch(batchId, nameId, vendor) {
+      const names = vendor === "allaboutpeople"
+        ? batchesAllAboutPeople[batchId] || []
+        : batchesCleanPac[batchId] || [];
+
+      populateSelect(nameId, names);
+    }
+
+    function submitForm(vendor) {
+      const suffix = vendor === "allaboutpeople" ? "1" : "2";
+      const poc = document.getElementById(`poc${suffix}`).value;
+      const city = document.getElementById(`site${suffix}`).value;
+      const site = document.getElementById(`subsite${suffix}`)?.value || city;
+      const batch = document.getElementById(`batch${suffix}`).value;
+      const name = document.getElementById(`name${suffix}`).value;
+      const status = document.getElementById(`status${suffix}`).value;
+      const confirmation = document.getElementById(`confirmation${suffix}`).value;
+
+      if (!poc || !city || !batch || !name || !status || (status === "Visited" && !confirmation)) {
+        alert("⚠️ Please complete all required fields.");
+        return;
+      }
+
+      const payload = { vendor, poc, city, site, batchName: batch, name, status, confirmation };
+
+
+      fetch("https://script.google.com/macros/s/AKfycbzQioMBg6Ef7n_OdAEhGnCKIcZoONvuMBQUohh6HWdpfWIc9z39v-QmuvSn1DU8CSou/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).then(() => {
+        alert("✅ Thank you for submitting data.");
+        setTimeout(() => location.reload(), 1000);
+      }).catch(console.error);
+    }
+
+    window.onload = () => {
+      populateSelect("site1", data.allaboutpeople.sites);
+      populateSelect("poc1", data.allaboutpeople.pocs);
+
+      populateSelect("site2", data.cleanpac.sites);
+      populateSelect("poc2", data.cleanpac.pocs);
+
+      document.getElementById("site1").addEventListener("change", e => updateSubsiteOptions(e.target.value, 1));
+      document.getElementById("site2").addEventListener("change", e => updateSubsiteOptions(e.target.value, 2));
+
+      document.getElementById("batch1").addEventListener("change", e => {
+        updateNamesByBatch(e.target.value, "name1", "allaboutpeople");
+      });
+
+      document.getElementById("batch2").addEventListener("change", e => {
+        updateNamesByBatch(e.target.value, "name2", "cleanpac");
+      });
+    };
+  </script>
+</body>
+</html>
